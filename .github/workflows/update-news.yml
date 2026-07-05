@@ -5,6 +5,9 @@ on:
     - cron: '0 */1 * * *'  # runs every 1 hour
   workflow_dispatch:  # lets you also trigger it manually from GitHub
 
+permissions:
+  contents: write
+
 jobs:
   update-news:
     runs-on: ubuntu-latest
