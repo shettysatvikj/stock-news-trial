@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarketSimple - Stock News in Plain English</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f0f2f5;
+      color: #1a1a1a;
+    }
+    header {
+      text-align: center;
+      padding: 30px 0;
+    }
+    header h1 {
+      font-size: 28px;
+      margin: 0;
+      background: linear-gradient(90deg, #4b2ecf, #2e7dd6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p {
+      color: #666;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+    .source-tag {
+      display: inline-block;
+      background: #eef1ff;
+      color: #4b2ecf;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 17px;
+      line-height: 1.4;
+    }
+    .card p {
+      color: #444;
+      line-height: 1.6;
+      font-size: 14.5px;
+      margin: 0 0 12px 0;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #999;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 10px;
+    }
+    .card-footer a {
+      color: #999;
+      text-decoration: none;
+    }
+    .card-footer a:hover {
+      color: #4b2ecf;
+    }
+    #status {
+      text-align: center;
+      color: #888;
+      padding: 40px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📈 MarketSimple</h1>
+    <p>Today's stock market news, explained in plain English</p>
+  </header>
+
+  <div id="posts">
+    <div id="status">Loading news...</div>
+  </div>
+
+  <script>
+    fetch('posts.json')
+      .then(res => res.json())
+      .then(posts => {
+        const container = document.getElementById('posts');
+        container.innerHTML = '';
+
+        if (posts.length === 0) {
+          container.innerHTML = '<div id="status">No news yet — run the fetch script first.</div>';
+          return;
+        }
+
+        posts.forEach(post => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <span class="source-tag">${post.source || 'News'}</span>
+            <h3>${post.originalTitle}</h3>
+            <p>${post.simplifiedContent}</p>
+            <div class="card-footer">
+              <span>${new Date(post.publishedAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+              <a href="${post.sourceUrl}" target="_blank">Source →</a>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(err => {
+        document.getElementById('posts').innerHTML = '<div id="status">Error loading posts: ' + err + '</div>';
+      });
+  </script>
+</body>
+</html>
